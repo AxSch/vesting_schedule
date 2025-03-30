@@ -15,11 +15,18 @@ class Award(BaseModel):
     vested_events: Annotated[List[Event], Field(default_factory=list)]
     cancelled_events: Annotated[List[Event], Field(default_factory=list)]
 
+    def add_vested_event(self, event: Event) -> None:
+        self.vested_events.append(event)
+
+    def add_cancelled_event(self, event: Event) -> None:
+        self.cancelled_events.append(event)
+
     def total_vested_shares(self, target_date: date, precision: int = 0) -> Decimal:
-        quantities = []
-        for event in self.vested_events:
-            if event.event_date <= target_date:
-                 quantities.append(event.quantity)
+        quantities = [
+            event.quantity
+            for event in sorted(self.vested_events, key=lambda e: e.event_date)
+            if event.event_date <= target_date
+        ]
         total_sum = Decimal(sum(quantities))
 
         if precision > 0:
@@ -27,10 +34,11 @@ class Award(BaseModel):
         return total_sum.to_integral_exact(rounding=decimal.ROUND_DOWN)
 
     def total_cancelled_shares(self, target_date: date, precision: int = 0) -> Decimal:
-        quantities = []
-        for event in self.cancelled_events:
-            if event.event_date <= target_date:
-                quantities.append(event.quantity)
+        quantities = [
+            event.quantity
+            for event in sorted(self.cancelled_events, key=lambda e: e.event_date)
+            if event.event_date <= target_date
+        ]
         total_sum = Decimal(sum(quantities))
 
         if precision > 0:
