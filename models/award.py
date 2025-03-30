@@ -25,3 +25,25 @@ class Award(BaseModel):
         if precision > 0:
             return total_sum.quantize(Decimal(f'0.{"0" * precision}'))
         return total_sum.to_integral_exact(rounding=decimal.ROUND_DOWN)
+
+    def total_cancelled_shares(self, target_date: date, precision: int = 0) -> Decimal:
+        quantities = []
+        for event in self.cancelled_events:
+            if event.event_date <= target_date:
+                quantities.append(event.quantity)
+        total_sum = Decimal(sum(quantities))
+
+        if precision > 0:
+            return total_sum.quantize(Decimal(f'0.{"0" * precision}'))
+        return total_sum.to_integral_exact(rounding=decimal.ROUND_DOWN)
+
+    def net_vested_shares(self, target_date: date, precision: int = 0) -> Decimal:
+        total_vested_shares = self.total_vested_shares(target_date, precision)
+        total_cancelled_shares = self.total_cancelled_shares(target_date, precision)
+
+        cancelled = min(total_vested_shares, total_cancelled_shares)
+        net_vested = total_vested_shares - cancelled
+
+        if precision > 0:
+            return net_vested.quantize(Decimal(f'0.{"0" * precision}'))
+        return net_vested.to_integral_exact(rounding=decimal.ROUND_DOWN)
