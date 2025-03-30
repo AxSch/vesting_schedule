@@ -1,3 +1,4 @@
+from datetime import date
 from decimal import Decimal
 
 from pydantic import field_validator, BaseModel
@@ -14,7 +15,7 @@ class Event(BaseModel):
     employee_id: str
     employee_name: str
     award_id: str
-    event_date: str
+    event_date: date
     quantity: Decimal
 
     @field_validator('quantity', mode="after")
