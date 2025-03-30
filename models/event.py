@@ -1,11 +1,11 @@
 from datetime import date
 from decimal import Decimal
 
-from pydantic import field_validator, BaseModel
+from pydantic import BaseModel, field_validator
 from enum import StrEnum
 
 
-class EventType(str, StrEnum):
+class EventType(StrEnum):
     VEST = "VEST"
     CANCEL = "CANCEL"
 
