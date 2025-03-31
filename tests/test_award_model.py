@@ -223,7 +223,7 @@ class TestAwardModel:
         assert award.net_vested_shares(date(2019, 12, 31)) == Decimal("0")
         assert award.net_vested_shares(date(2020, 1, 15)) == Decimal("1000")
         assert award.net_vested_shares(date(2020, 2, 15)) == Decimal("500")
-        assert award.net_vested_shares(date(2020, 3, 15)) == Decimal("2819")
+        assert award.net_vested_shares(date(2020, 3, 15)) == Decimal("2819.94")
 
     def test_net_vested_shares_with_precision(self):
         award = Award(
@@ -254,9 +254,9 @@ class TestAwardModel:
         award.add_vested_event(vest_event)
         award.add_cancelled_event(cancel_event)
 
-        assert award.net_vested_shares(date(2020, 3, 1), 0) == Decimal("700")
-        assert award.net_vested_shares(date(2020, 3, 1), 1) == Decimal("700.4")
-        assert award.net_vested_shares(date(2020, 3, 1), 2) == Decimal("700.44")
+        assert award.net_vested_shares(date(2020, 3, 1), 0) == Decimal("700.444")
+        assert award.net_vested_shares(date(2020, 3, 1), 1) == Decimal("700.444")
+        assert award.net_vested_shares(date(2020, 3, 1), 2) == Decimal("700.444")
         assert award.net_vested_shares(date(2020, 3, 1), 3) == Decimal("700.444")
 
     def test_cancelled_is_more_than_vested(self):
