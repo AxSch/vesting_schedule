@@ -34,11 +34,14 @@ class Award(BaseModel):
             for event in sorted(self.vested_events, key=lambda e: e.event_date)
             if event.event_date <= target_date
         ]
-        total_sum = Decimal(sum(quantities))
+        total_sum = sum(quantities, Decimal('0'))
 
         if precision > 0:
             return total_sum.quantize(Decimal(f'0.{"0" * precision}'))
-        return total_sum.to_integral_exact(rounding=decimal.ROUND_DOWN)
+        if total_sum % 1 != 0:
+            return total_sum
+        else:
+         return total_sum.to_integral_exact(rounding=decimal.ROUND_DOWN)
 
     def total_cancelled_shares(self, target_date: date, precision: int = 0) -> Decimal:
         quantities = [
@@ -46,11 +49,14 @@ class Award(BaseModel):
             for event in sorted(self.cancelled_events, key=lambda e: e.event_date)
             if event.event_date <= target_date
         ]
-        total_sum = Decimal(sum(quantities))
+        total_sum = sum(quantities, Decimal('0'))
 
         if precision > 0:
             return total_sum.quantize(Decimal(f'0.{"0" * precision}'))
-        return total_sum.to_integral_exact(rounding=decimal.ROUND_DOWN)
+        if total_sum % 1 != 0:
+            return total_sum
+        else:
+            return total_sum.to_integral_exact(rounding=decimal.ROUND_DOWN)
 
     def net_vested_shares(self, target_date: date, precision: int = 0) -> Decimal:
         total_vested_shares = self.total_vested_shares(target_date, precision)
