@@ -12,6 +12,6 @@ setup(
             "vesting_schedule=vesting_schedule.main:main",
         ],
     },
-    python_requires="3.13",
+    python_requires=">=3.12,<3.14",
     description="A program to calculate vested shares from a vesting schedule",
 )
