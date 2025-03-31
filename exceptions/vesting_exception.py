@@ -1,0 +1,3 @@
+
+class VestingValidationError(Exception):
+    pass
