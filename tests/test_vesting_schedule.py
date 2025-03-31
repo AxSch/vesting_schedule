@@ -3,7 +3,8 @@ from decimal import Decimal
 import pytest
 
 from models.event import Event, EventType
-from services.vesting_service import VestingService, VestingValidationError
+from services.vesting_service import VestingService
+from exceptions.vesting_exception import VestingValidationError
 
 class TestVestingService:
     def test_process_vest_events(self):
