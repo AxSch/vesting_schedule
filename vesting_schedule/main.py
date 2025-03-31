@@ -36,10 +36,13 @@ def main():
         schedule = service.get_vesting_schedule(target_date, args.precision)
 
         for employee_id, employee_name, award_id, net_vested in schedule:
-            if args.precision > 0:
-                net_vested_str = f"{net_vested:.{args.precision}}"
-            else:
+            if args.precision == 0:
                 net_vested_str = str(int(net_vested))
+            else:
+                format_str = f"{{:.{args.precision}f}}"
+                net_vested_str = format_str.format(float(net_vested))
+                if float(net_vested) == 0:
+                    net_vested_str = format_str.format(0)
 
             print(f"{employee_id},{employee_name},{award_id},{net_vested_str}")
 
