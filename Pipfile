@@ -7,6 +7,7 @@ name = "pypi"
 setuptools = "*"
 vesting_schedule = {editable = true, path = "."}
 pydantic = "*"
+pytest = "*"
 
 [dev-packages]
 
