@@ -13,12 +13,12 @@ def main():
     parser.add_argument('file', help='CSV file containing vesting events')
     parser.add_argument('date', help='Target date in YYYY-MM-DD format')
     parser.add_argument('precision', nargs='?', type=int, default=0,
-                        help='Number of decimal places to consider (0-3)')
+                        help='Number of decimal places to consider (0-6)')
 
     args = parser.parse_args()
 
-    if not (0 <= args.precision <= 3):
-        print(f"Error: Precision must be between 0 and 3, got {args.precision}", file=sys.stderr)
+    if not (0 <= args.precision <= 6):
+        print(f"Error: Precision must be between 0 and 6, got {args.precision}", file=sys.stderr)
         sys.exit(1)
 
     try:
