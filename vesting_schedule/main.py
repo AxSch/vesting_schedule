@@ -14,6 +14,11 @@ def main():
     parser.add_argument('date', help='Target date in YYYY-MM-DD format')
     parser.add_argument('precision', nargs='?', type=int, default=0,
                         help='Number of decimal places to consider (0-6)')
+    parser.add_argument('--parallel', action='store_true', help='Use parallel processing')
+    parser.add_argument('--workers', type=int, default=None,
+                        help='Number of worker threads/processes (default: auto)')
+    parser.add_argument('--chunk-size', type=int, default=5000,
+                        help='Number of rows to process in each chunk (default: 5000)')
 
     args = parser.parse_args()
 
@@ -28,9 +33,15 @@ def main():
             print(f"Error: Invalid date format '{args.date}'. Use YYYY-MM-DD.", file=sys.stderr)
             sys.exit(1)
 
-        events = parse_csv(args.file, args.precision)
+        events = parse_csv(
+            args.file,
+            args.precision,
+            use_parallel=args.parallel,
+            max_workers=args.workers,
+            chunk_size=args.chunk_size
+        )
 
-        service = VestingService()
+        service = VestingService(use_parallel=args.parallel, max_workers=args.workers)
         service.process_events(events)
 
         schedule = service.get_vesting_schedule(target_date, args.precision)
