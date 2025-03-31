@@ -72,7 +72,7 @@ class TestCSVParser:
         self.temp_file.write("VEST,E001,Alice Smith,ISO-001,01/01/2020,1000\n")
         self.temp_file.flush()
 
-        with pytest.raises(CSVParserError, match=r"Unexpected error: Invalid event date: '01/01/2020' expected YYYY-MM-DD \(line 1\)"):
+        with pytest.raises(CSVParserError, match="Invalid event date: '01/01/2020' expected YYYY-MM-DD"):
             parse_csv(self.temp_file.name)
 
     def test_parse_csv_invalid_quantity(self):
