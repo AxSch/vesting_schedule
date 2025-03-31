@@ -20,7 +20,7 @@ def parallel_map(func: Callable[[T], R], items: List[T], max_workers: int = None
                 result = future.result()
                 results.append((key, result))
             except Exception as error:
-                raise ProcessingError(error)
+                raise error
 
     results.sort(key=lambda x: x[0])
     return [result[1] for result in results]
