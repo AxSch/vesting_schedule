@@ -3,7 +3,7 @@ from datetime import date
 from decimal import Decimal
 from typing import List, Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from models.event import Event
 
@@ -14,6 +14,13 @@ class Award(BaseModel):
     employee_name: str
     vested_events: Annotated[List[Event], Field(default_factory=list)]
     cancelled_events: Annotated[List[Event], Field(default_factory=list)]
+
+    @field_validator('award_id', 'employee_id', 'employee_name', mode="after")
+    @classmethod
+    def validate_non_empty(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Field cannot be empty")
+        return value
 
     def add_vested_event(self, event: Event) -> None:
         self.vested_events.append(event)
