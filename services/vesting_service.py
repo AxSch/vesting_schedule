@@ -57,12 +57,17 @@ class VestingService:
     def get_vesting_schedule(self, target_date: date, precision: int = 0) -> List[Tuple[str, str, str, Decimal]]:
         result = []
 
+        def format_decimal(value: Decimal, prec: int) -> Decimal:
+            if prec > 0:
+                return value.quantize(Decimal(f'0.{"0" * prec}'))
+            return value.to_integral_value()
+
         for employee_id in sorted(self.employees.keys()):
             employee = self.employees[employee_id]
 
             for award_id in sorted(employee.awards.keys()):
                 award = employee.awards[award_id]
-                net_vested = award.net_vested_shares(target_date, precision)
+                net_vested = format_decimal(award.net_vested_shares(target_date, precision), precision)
 
                 result.append((employee_id, employee.name, award_id, net_vested))
 
