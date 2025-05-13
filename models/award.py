@@ -16,8 +16,10 @@ class Award(BaseModel):
     employee_name: str
     vested_events: Annotated[List[Event], Field(default_factory=list)]
     cancelled_events: Annotated[List[Event], Field(default_factory=list)]
+    performance_events: Annotated[List[Event], Field(default_factory=list)]
     _vesting_cache: Dict[Tuple[date, int], Decimal] = None
     _cancellation_cache: Dict[Tuple[date, int], Decimal] = None
+    _performance_cache: Dict[Tuple[date, int], Decimal] = None
     _net_vesting_cache: Dict[Tuple[date, int], Decimal] = None
     _is_cache_valid: bool = True
     _calculation_lock: RLock = None
@@ -28,6 +30,7 @@ class Award(BaseModel):
         self._calculation_lock = _award_lock
         self._vesting_cache = {}
         self._cancellation_cache = {}
+        self._performance_cache = {}
         self._net_vesting_cache = {}
 
     def __getstate__(self):
@@ -60,6 +63,11 @@ class Award(BaseModel):
             self.cancelled_events.append(event)
             self._invalidate_cache()
 
+    def add_performance_event(self, event: Event) -> None:
+        with self._calculation_lock:
+            self.performance_events.append(event)
+            self._invalidate_cache()
+
     def _invalidate_cache(self) -> None:
         with self._calculation_lock:
             self._is_cache_valid = False
@@ -67,6 +75,8 @@ class Award(BaseModel):
                 self._vesting_cache.clear()
             if self._cancellation_cache is not None:
                 self._cancellation_cache.clear()
+            if self._performance_cache is not None:
+                self._performance_cache.clear()
             if self._net_vesting_cache is not None:
                 self._net_vesting_cache.clear()
 
@@ -94,6 +104,18 @@ class Award(BaseModel):
             self._cancellation_cache[cache_key] = result
             return result
 
+    def total_performance_events(self, target_date: date, precision: int = 0) -> Decimal:
+        with self._calculation_lock:
+            cache_key = (target_date, precision)
+
+            if self._is_cache_valid and cache_key in self._performance_cache:
+                return self._performance_cache[cache_key]
+
+            result = self._calculator.calculate_performance_bonus(self.performance_events, target_date)
+
+            self._performance_cache[cache_key] = result
+            return result
+
     def net_vested_shares(self, target_date: date, precision: int = 0) -> Decimal:
         with self._calculation_lock:
             cache_key = (target_date, precision)
@@ -103,9 +125,10 @@ class Award(BaseModel):
 
             total_vested_shares = self.total_vested_shares(target_date, precision)
             total_cancelled_shares = self.total_cancelled_shares(target_date, precision)
+            total_performance_bonus = self.total_performance_events(target_date, precision)
 
             cancelled = min(total_vested_shares, total_cancelled_shares)
-            net_vested = total_vested_shares - cancelled
+            net_vested = (total_vested_shares - cancelled) * total_performance_bonus
 
             self._net_vesting_cache[cache_key] = net_vested
             return net_vested
