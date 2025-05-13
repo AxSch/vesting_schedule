@@ -8,6 +8,7 @@ from enum import StrEnum
 class EventType(StrEnum):
     VEST = "VEST"
     CANCEL = "CANCEL"
+    PERFORMANCE = "PERFORMANCE"
 
 
 class Event(BaseModel):
