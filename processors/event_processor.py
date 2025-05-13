@@ -60,6 +60,19 @@ class CancelEventProcessor(EventProcessor):
         award.add_cancelled_event(event)
 
 
+@EventProcessor.register(EventType.PERFORMANCE)
+class PerformanceBonusEventProcessor(EventProcessor):
+    def validate(self, event: Event, award: Award) -> None:
+        if event.quantity <= 0:
+            raise VestingValidationError(
+                f"Performance bonus must be positive, got {event.quantity}"
+            )
+
+    def process(self, event: Event, award: Award) -> None:
+        self.validate(event, award)
+        award.add_performance_event(event)
+
+
 def create_event_processor(event_type: EventType) -> EventProcessor:
     processor_class = EventProcessor.get_processor(event_type)
     return processor_class()
