@@ -58,7 +58,8 @@ class VestingService:
                     employee_id=event.employee_id,
                     employee_name=event.employee_name,
                     vested_events=[],
-                    cancelled_events=[]
+                    cancelled_events=[],
+                    performance_events=[]
                 )
             return employee.awards[event.award_id]
 
