@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from models.event import EventType, Event
+from models.event import Event, EventType
 
 
 class IAwardEventStore(ABC):
 
     @abstractmethod
-    def add_award_event(self, award_id: str, event: Event) -> None:
+    def add_award_event(self, event: Event) -> None:
         ...
 
     @abstractmethod
