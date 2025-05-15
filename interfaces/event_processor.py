@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Callable, Dict, ClassVar, Type, Self
 
-from models.award import Award
+from interfaces.award_calculator_service import IAwardCalculatorService
+from interfaces.award_event_store import IAwardEventStore
 from models.event import EventType, Event
 
 
@@ -22,9 +23,9 @@ class IEventProcessor(ABC):
         return cls._registry[event_type]
 
     @abstractmethod
-    def process(self, event: Event, award: Award) -> None:
+    def process(self, event: Event, event_store: IAwardEventStore) -> None:
         ...
 
     @abstractmethod
-    def validate(self, event: Event, award: Award) -> None:
+    def validate(self, event: Event, calculation_service: IAwardCalculatorService) -> None:
         ...
