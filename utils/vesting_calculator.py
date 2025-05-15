@@ -1,22 +1,12 @@
 from datetime import date
 from decimal import Decimal
-from typing import List, Protocol
+from typing import List
 
+from interfaces.vesting_calculator import IVestingCalculator
 from models.event import Event
 from utils.decimal_utils import decimal_sum
 
-
-class VestingCalculator(Protocol):
-    def calculate_vested_shares(self, events: List[Event], target_date: date) -> Decimal:
-        ...
-
-    def calculate_cancelled_shares(self, events: List[Event], target_date: date) -> Decimal:
-        ...
-
-    def calculate_performance_bonus(self, events: List[Event], target_date: date) -> Decimal:
-        ...
-
-class DefaultVestingCalculator:
+class DefaultVestingCalculator(IVestingCalculator):
     def calculate_vested_shares(self, events: List[Event], target_date: date) -> Decimal:
         quantities = [
             event.quantity
