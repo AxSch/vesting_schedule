@@ -1,39 +1,10 @@
-from abc import ABC, abstractmethod
-from typing import Type, Dict, TypeVar, Callable
-from typing_extensions import ClassVar
-
 from exceptions.vesting_exception import VestingValidationError
+from interfaces.event_processor import IEventProcessor
 from models.award import Award
 from models.event import EventType, Event
 
-T = TypeVar('T', bound='EventProcessor')
-
-class EventProcessor(ABC):
-    _registry: ClassVar[Dict[EventType, Type['EventProcessor']]] = {}
-
-    @classmethod
-    def register(cls, event_type: EventType) -> Callable[[Type[T]], Type[T]]:
-        def inner(processor_class: Type[T]) -> Type[T]:
-            cls._registry[event_type] = processor_class
-            return processor_class
-        return inner
-
-    @classmethod
-    def get_processor(cls, event_type: EventType) -> Type['EventProcessor']:
-        if event_type not in cls._registry:
-            raise ValueError(f"No processor registered for event type: {event_type}")
-        return cls._registry[event_type]
-
-    @abstractmethod
-    def process(self, event: Event, award: Award) -> None:
-        pass
-
-    @abstractmethod
-    def validate(self, event: Event, award: Award) -> None:
-        pass
-
-@EventProcessor.register(EventType.VEST)
-class VestEventProcessor(EventProcessor):
+@IEventProcessor.register(EventType.VEST)
+class VestEventProcessor(IEventProcessor):
     def validate(self, event: Event, award: Award) -> None:
         if event.quantity <= 0:
             raise VestingValidationError(
@@ -45,8 +16,8 @@ class VestEventProcessor(EventProcessor):
         award.add_vested_event(event)
 
 
-@EventProcessor.register(EventType.CANCEL)
-class CancelEventProcessor(EventProcessor):
+@IEventProcessor.register(EventType.CANCEL)
+class CancelEventProcessor(IEventProcessor):
     def validate(self, event: Event, award: Award) -> None:
         vested_to_date = award.total_vested_shares(event.event_date)
         cancelled_to_date = award.total_cancelled_shares(event.event_date)
@@ -60,8 +31,8 @@ class CancelEventProcessor(EventProcessor):
         award.add_cancelled_event(event)
 
 
-@EventProcessor.register(EventType.PERFORMANCE)
-class PerformanceBonusEventProcessor(EventProcessor):
+@IEventProcessor.register(EventType.PERFORMANCE)
+class PerformanceBonusEventProcessor(IEventProcessor):
     def validate(self, event: Event, award: Award) -> None:
         if event.quantity <= 0:
             raise VestingValidationError(
@@ -73,6 +44,6 @@ class PerformanceBonusEventProcessor(EventProcessor):
         award.add_performance_event(event)
 
 
-def create_event_processor(event_type: EventType) -> EventProcessor:
-    processor_class = EventProcessor.get_processor(event_type)
+def create_event_processor(event_type: EventType) -> IEventProcessor:
+    processor_class = IEventProcessor.get_processor(event_type)
     return processor_class()
