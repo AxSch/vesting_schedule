@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, ClassVar, Type, Self
+from datetime import date
+from typing import Callable, Dict, ClassVar, Type, Self, Optional
 
 from interfaces.award_calculator_service import IAwardCalculatorService
 from interfaces.award_event_store import IAwardEventStore
@@ -20,12 +21,13 @@ class IEventProcessor(ABC):
     def get_processor(cls, event_type: EventType) -> Type[Self]:
         if event_type not in cls._registry:
             raise ValueError(f"No processor registered for event type: {event_type}")
+
         return cls._registry[event_type]
 
     @abstractmethod
-    def process(self, event: Event, event_store: IAwardEventStore) -> None:
+    def process_event(self, event: Event, event_store: IAwardEventStore) -> None:
         ...
 
     @abstractmethod
-    def validate(self, event: Event, calculation_service: IAwardCalculatorService) -> None:
+    def validate_event(self, event: Event, calculation_service: IAwardCalculatorService, target_date: Optional[date] = None) -> None:
         ...
