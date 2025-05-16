@@ -13,8 +13,8 @@ class AwardEventStore(IAwardEventStore):
             EventType.PERFORMANCE: []
         })
 
-    def add_award_event(self, award_id: str, event: Event) -> None:
-        self.events_collections[award_id][event.event_type].append(event)
+    def add_award_event(self, event: Event) -> None:
+        self.events_collections[event.award_id][event.event_type].append(event)
 
     def get_all_award_events(self, award_id: str, event_type: EventType) -> List[Event]:
         return sorted(self.events_collections[award_id][event_type], key=lambda e: e.event_date)
