@@ -6,8 +6,11 @@ name = "pypi"
 [packages]
 setuptools = "*"
 vesting_schedule = {editable = true, path = "."}
-pydantic = "*"
+pydantic = ">=2.0.0"
 pytest = "*"
+uvloop = "*"
+numba = "*"
+numpy = "*"
 
 [dev-packages]
 
