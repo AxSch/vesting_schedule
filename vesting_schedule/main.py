@@ -17,6 +17,8 @@ async def async_main():
     parser.add_argument('date', help='Target date in YYYY-MM-DD format')
     parser.add_argument('precision', nargs='?', type=int, default=0,
                         help='Number of decimal places to consider (0-6)')
+    parser.add_argument('--use_numba_calculator', type=bool, default=False,
+                        help='Utilize numba calculator for performance boost (default: False)')
     parser.add_argument('--workers', type=int, default=1,
                         help='Number of worker threads/processes (default: auto)')
     parser.add_argument('--chunk-size', type=int, default=5000,
@@ -38,9 +40,13 @@ async def async_main():
         csv_processor = CSVProcessor(chunk_size=args.chunk_size, max_workers=args.workers)
 
         events = await csv_processor.parse_csv(args.file, args.precision)
-        service = VestingService(target_date=target_date, max_workers=args.workers)
-        await service.process_events(events)
 
+        if not args.use_numba_calculator:
+            service = VestingService(target_date=target_date, max_workers=args.workers)
+        else:
+            service = VestingService(target_date=target_date, max_workers=args.workers, use_numba_calculator=True)
+
+        await service.process_events(events)
         schedule = service.get_vesting_schedule(args.precision)
 
         for employee_id, employee_name, award_id, net_vested in schedule:

@@ -18,9 +18,9 @@ from processors.event_processor import create_event_processor
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 class VestingService:
-    def __init__(self, target_date: date, max_workers: int = 100):
+    def __init__(self, target_date: date, max_workers: int = 100, use_numba_calculator: bool = False):
         self.event_store: IAwardEventStore = AwardEventStore()
-        self.calculation_service: IAwardCalculatorService = AwardCalculatorService(self.event_store)
+        self.calculation_service: IAwardCalculatorService = AwardCalculatorService(self.event_store, use_numba_calculator)
         self.target_date: date = target_date
         self.max_workers: int = max_workers
         self.employee_registry: IEmployeeRegistry = EmployeeRegistry()

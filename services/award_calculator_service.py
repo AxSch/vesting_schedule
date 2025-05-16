@@ -6,13 +6,14 @@ from interfaces.award_event_store import IAwardEventStore
 from interfaces.vesting_calculator import IVestingCalculator
 from models.award_event_store import AwardEventStore
 from models.event import EventType
+from utils.numba_vesting_calculator import NumbaVestingCalculator
 from utils.vesting_calculator import DefaultVestingCalculator
 
 
 class AwardCalculatorService(IAwardCalculatorService):
-    def __init__(self, award_event_store: IAwardEventStore = None):
+    def __init__(self, award_event_store: IAwardEventStore = None, use_numba_calculator = False):
         self.award_event_store: IAwardEventStore = award_event_store or AwardEventStore()
-        self.calculator: IVestingCalculator = DefaultVestingCalculator()
+        self.calculator: IVestingCalculator = DefaultVestingCalculator() if not use_numba_calculator else NumbaVestingCalculator()
 
     def calculate_vested_shares(self, award_id: str, target_date: date) -> Decimal:
         events = self.award_event_store.get_all_award_events(award_id, EventType.VEST)
