@@ -25,9 +25,9 @@ class IEventProcessor(ABC):
         return cls._registry[event_type]
 
     @abstractmethod
-    def process_event(self, event: Event, event_store: IAwardEventStore) -> None:
+    async def process_event(self, event: Event, event_store: IAwardEventStore) -> None:
         ...
 
     @abstractmethod
-    def validate_event(self, event: Event, calculation_service: IAwardCalculatorService, target_date: Optional[date] = None) -> None:
+    async def validate_event(self, event: Event, calculation_service: IAwardCalculatorService, target_date: Optional[date] = None) -> None:
         ...
