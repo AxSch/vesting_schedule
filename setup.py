@@ -2,7 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name="vesting_schedule",
-    version="2.1.0",
+    version="2.1.1",
+    author="AxSch",
     packages=find_packages(),
     install_requires=[
         "pydantic",
