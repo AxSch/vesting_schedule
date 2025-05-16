@@ -10,10 +10,9 @@ from utils.vesting_calculator import DefaultVestingCalculator
 
 
 class AwardCalculatorService(IAwardCalculatorService):
-    def __init__(self):
-        self.award_event_store: IAwardEventStore = AwardEventStore()
+    def __init__(self, award_event_store: IAwardEventStore = None):
+        self.award_event_store: IAwardEventStore = award_event_store or AwardEventStore()
         self.calculator: IVestingCalculator = DefaultVestingCalculator()
-
 
     def calculate_vested_shares(self, award_id: str, target_date: date) -> Decimal:
         events = self.award_event_store.get_all_award_events(award_id, EventType.VEST)
