@@ -2,6 +2,7 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
+from pydantic import ValidationError
 
 from models.event import Event, EventType
 
@@ -87,3 +88,14 @@ class TestEventModel:
         )
 
         assert event.quantity == Decimal("10.501")
+
+    def test_invalid_event(self):
+        with pytest.raises(ValidationError):
+            Event(
+                event_type=EventType.VEST,
+                employee_id="",
+                employee_name="Alice Smith",
+                award_id="ISO-001",
+                event_date=date(2020, 1, 1),
+                quantity=Decimal(1000)
+            )

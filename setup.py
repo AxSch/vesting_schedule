@@ -2,10 +2,14 @@ from setuptools import setup, find_packages
 
 setup(
     name="vesting_schedule",
-    version="1.1.0",
+    version="2.1.1",
+    author="AxSch",
     packages=find_packages(),
     install_requires=[
         "pydantic",
+        "numba",
+        "numpy",
+        "uvloop",
     ],
     entry_points={
         "console_scripts": [
