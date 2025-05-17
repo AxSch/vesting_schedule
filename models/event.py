@@ -25,3 +25,10 @@ class Event(BaseModel):
         if value <= 0:
             raise ValueError("Quantity must be positive")
         return value
+
+    @field_validator('award_id', mode="after")
+    @classmethod
+    def ensure_exists(cls, value):
+        if not value or "":
+            raise ValueError("Award ID must be provided")
+        return value
