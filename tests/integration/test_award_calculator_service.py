@@ -1,6 +1,6 @@
 from datetime import date
 from decimal import Decimal
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 
 from models.event import Event, EventType
 from services.award_calculator_service import AwardCalculatorService
