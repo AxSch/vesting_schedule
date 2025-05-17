@@ -1,4 +1,4 @@
-from typing import Optional, Set, Dict
+from typing import Optional, Dict
 
 from interfaces.employee_registry import IEmployeeRegistry
 from models.employee import EmployeeRecord
@@ -23,8 +23,3 @@ class EmployeeRegistry(IEmployeeRegistry):
 
     def get_all_employee_ids(self) -> list[str]:
         return sorted(self._employees.keys())
-
-    def get_employee_awards(self, employee_id: str) -> Set[str]:
-        if employee_id in self._employees:
-            return self._employees[employee_id].awards
-        return set()

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Set
+from typing import Optional
 
 from models.employee import EmployeeRecord
 
@@ -20,8 +20,4 @@ class IEmployeeRegistry(ABC):
 
     @abstractmethod
     def get_all_employee_ids(self) -> list[str]:
-        ...
-
-    @abstractmethod
-    def get_employee_awards(self, employee_id: str) -> Set[str]:
         ...
