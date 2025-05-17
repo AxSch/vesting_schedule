@@ -38,13 +38,9 @@ class VestingService:
             award_events.setdefault(key, []).append(event)
 
         semaphore = asyncio.Semaphore(self.max_workers)
-        tasks = []
 
         for key, events_list in award_events.items():
-            task = self.process_award_events(semaphore, events_list)
-            tasks.append(task)
-
-        await asyncio.gather(*tasks)
+            await self.process_award_events(semaphore, events_list)
 
     async def process_award_events(self, semaphore: asyncio.Semaphore, events: List[Event]) -> None:
         async with semaphore:
