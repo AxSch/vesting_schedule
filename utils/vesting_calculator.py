@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import List
 
 from interfaces.vesting_calculator import IVestingCalculator
-from models.event import Event
+from models.event import Event, EventType
 from utils.decimal_utils import decimal_sum
 
 class DefaultVestingCalculator(IVestingCalculator):
@@ -11,7 +11,7 @@ class DefaultVestingCalculator(IVestingCalculator):
         quantities = [
             event.quantity
             for event in sorted(events, key=lambda event: event.event_date)
-            if event.event_date <= target_date
+            if event.event_date <= target_date and event.event_type == EventType.VEST
         ]
 
         return decimal_sum(quantities)
@@ -20,7 +20,7 @@ class DefaultVestingCalculator(IVestingCalculator):
         quantities = [
             event.quantity
             for event in sorted(events, key=lambda event: event.event_date)
-            if event.event_date <= target_date
+            if event.event_date <= target_date and event.event_type == EventType.CANCEL
         ]
         return decimal_sum(quantities)
 
@@ -28,7 +28,7 @@ class DefaultVestingCalculator(IVestingCalculator):
         total_performance_events = [
             event.quantity
             for event in sorted(events, key=lambda event: event.event_date)
-            if event.event_date <= target_date
+            if event.event_date <= target_date and event.event_type == EventType.PERFORMANCE
         ]
         result = sum(total_performance_events)
         if result > 0:
