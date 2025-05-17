@@ -26,9 +26,9 @@ class Event(BaseModel):
             raise ValueError("Quantity must be positive")
         return value
 
-    @field_validator('award_id', mode="after")
+    @field_validator('award_id', 'employee_id', 'employee_name', mode="after")
     @classmethod
-    def ensure_exists(cls, value):
-        if not value or "":
-            raise ValueError("Award ID must be provided")
+    def validate_non_empty(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Field cannot be empty")
         return value
