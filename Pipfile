@@ -13,6 +13,8 @@ numba = "*"
 numpy = "*"
 
 [dev-packages]
+pytest-asyncio = "*"
+pytest-xdist = "*"
 
 [requires]
 python_version = "3.13"
