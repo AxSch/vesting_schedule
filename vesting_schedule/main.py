@@ -72,6 +72,7 @@ async def async_main():
 
 def main():
     uvloop.install()
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     asyncio.run(async_main())
 
 if __name__ == "__main__":

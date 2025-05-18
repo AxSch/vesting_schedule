@@ -3,8 +3,6 @@ from datetime import date
 from decimal import Decimal
 from typing import Dict, List, Tuple
 
-import uvloop
-
 from exceptions.vesting_exception import VestingValidationError
 from interfaces.award_calculator_service import IAwardCalculatorService
 from interfaces.award_event_store import IAwardEventStore
@@ -14,8 +12,6 @@ from models.award_event_store import AwardEventStore
 from models.event import Event
 from services.award_calculator_service import AwardCalculatorService
 from processors.event_processor import create_event_processor
-
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 class VestingService:
     def __init__(self, target_date: date, max_workers: int = 100, use_numba_calculator: bool = False):
