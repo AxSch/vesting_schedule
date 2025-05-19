@@ -4,7 +4,7 @@ from decimal import Decimal
 from interfaces.award_calculator_service import IAwardCalculatorService
 from interfaces.award_event_store import IAwardEventStore
 from interfaces.vesting_calculator import IVestingCalculator
-from models.award_event_store import AwardEventStore
+from repositories.award_event_store import AwardEventStore
 from models.event import EventType
 from utils.numba_vesting_calculator import NumbaVestingCalculator
 from utils.vesting_calculator import DefaultVestingCalculator

@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import pytest
 
-from models.award_event_store import AwardEventStore
+from repositories.award_event_store import AwardEventStore
 from models.event import EventType, Event
 
 

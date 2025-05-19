@@ -8,7 +8,7 @@ from interfaces.award_calculator_service import IAwardCalculatorService
 from interfaces.award_event_store import IAwardEventStore
 from repositories.employee_registry import EmployeeRegistry
 from interfaces.employee_registry import IEmployeeRegistry
-from models.award_event_store import AwardEventStore
+from repositories.award_event_store import AwardEventStore
 from models.event import Event
 from services.award_calculator_service import AwardCalculatorService
 from processors.event_processor import create_event_processor
